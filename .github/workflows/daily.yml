@@ -29,3 +29,13 @@ jobs:
         with:
           name: ai-daily-digest
           path: digest.md
+
+      - name: Push to WeChat via ServerChan
+        env:
+          SERVERCHAN_KEY: ${{ secrets.SERVERCHAN_KEY }}
+        run: |
+          CONTENT=$(cat digest.md)
+          curl -X POST "https://sctapi.ftqq.com/${SERVERCHAN_KEY}.send" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            --data-urlencode "title=AI Daily Digest" \
+            --data-urlencode "desp=${CONTENT}"
