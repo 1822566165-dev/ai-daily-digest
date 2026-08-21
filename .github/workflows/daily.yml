@@ -1,0 +1,31 @@
+name: AI Daily Digest
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  generate-digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate AI Daily Digest
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          npx -y bun scripts/digest.ts \
+            --hours 24 \
+            --top-n 15 \
+            --lang zh \
+            --output ./digest.md
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-daily-digest
+          path: digest.md
